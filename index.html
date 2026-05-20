@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Visor 3D VR | SketchUp + Three.js</title>
+
+  <!-- Bootstrap CDN -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
+
+  <!-- CSS propio -->
+  <link rel="stylesheet" href="css/styles.css">
+
+  <!-- Import Map para Three.js por CDN -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.184.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.184.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow">
+    <div class="container-fluid">
+
+      <a class="navbar-brand fw-bold" href="#">
+        Visor 3D VR
+      </a>
+
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarPrincipal"
+        aria-controls="navbarPrincipal"
+        aria-expanded="false"
+        aria-label="Abrir menú"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarPrincipal">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a href="#inicio" class="nav-link active">Inicio</a>
+          </li>
+          <li class="nav-item">
+            <a href="#visor" class="nav-link">Modelo 3D</a>
+          </li>
+          <li class="nav-item">
+            <a href="#programador" class="nav-link">Programador</a>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- Encabezado -->
+  <header id="inicio" class="header-section text-center text-light">
+    <div class="container">
+      <h1 class="display-5 fw-bold">Visualizador de modelo 3D en VR</h1>
+      <p class="lead">
+        Modelo exportado desde SketchUp en formato GLB y visualizado con Three.js.
+      </p>
+    </div>
+  </header>
+
+  <!-- Contenido principal -->
+  <main id="visor" class="main-section">
+
+    <div class="container-fluid">
+      <div class="row">
+
+        <!-- Panel de información -->
+        <aside class="col-lg-3 panel-info p-4">
+
+          <h2 class="h4 mb-3">Información del modelo</h2>
+
+          <div class="card bg-dark text-light border-secondary mb-3">
+            <div class="card-body">
+              <h5 class="card-title">Formato usado</h5>
+              <p class="card-text">
+                Se recomienda usar <strong>.glb</strong> porque es ligero, compatible con Three.js y puede contener texturas y materiales.
+              </p>
+            </div>
+          </div>
+
+          <div class="card bg-dark text-light border-secondary mb-3">
+            <div class="card-body">
+              <h5 class="card-title">Ruta del archivo</h5>
+              <code>assets/modelo.glb</code>
+            </div>
+          </div>
+
+          <div class="d-grid gap-2">
+            <button id="btnRecentrar" class="btn btn-primary">
+              Recentrar cámara
+            </button>
+
+            <button id="btnGuia" class="btn btn-outline-light">
+              Mostrar / ocultar guía
+            </button>
+          </div>
+
+          <hr class="border-secondary my-4">
+
+          <h3 class="h5">Pasos de uso</h3>
+
+          <ol class="small">
+            <li>Exporta tu modelo desde SketchUp como <strong>GLB</strong>.</li>
+            <li>Guárdalo dentro de la carpeta <strong>assets</strong>.</li>
+            <li>Renómbralo como <strong>modelo.glb</strong>.</li>
+            <li>Ejecuta el proyecto desde un servidor local.</li>
+          </ol>
+
+        </aside>
+
+        <!-- Visor 3D -->
+        <section class="col-lg-9 visor-container p-0">
+
+          <div id="mensajeCarga" class="mensaje-carga">
+            <div class="spinner-border text-info mb-3" role="status"></div>
+            <h3>Cargando modelo 3D...</h3>
+            <p>Verifica que el archivo exista en <strong>assets/modelo.glb</strong></p>
+          </div>
+
+          <div id="contenedor3D"></div>
+
+        </section>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer id="programador" class="footer bg-dark text-light text-center py-4">
+
+    <div class="container">
+
+      <h5 class="fw-bold mb-2">Datos del programador</h5>
+
+      <p class="mb-1">
+        <strong>Nombre:</strong> Luis Enrique Cabrera García
+      </p>
+
+      <p class="mb-1">
+        <strong>Correo:</strong>
+        <a href="mailto:cabrera.luisenrique008@gmail.com">
+          cabrera.luisenrique008@gmail.com
+        </a>
+      </p>
+
+      <p class="mb-1">
+        <strong>Proyecto:</strong> Visor 3D con Three.js, Bootstrap y VR
+      </p>
+
+      <p class="mb-0 small text-secondary">
+        &copy; 2026 - Proyecto académico
+      </p>
+
+    </div>
+
+  </footer>
+
+  <!-- Bootstrap JS CDN -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+  </script>
+
+  <!-- JS propio -->
+  <script type="module" src="js/main.js"></script>
+
+</body>
+</html>
