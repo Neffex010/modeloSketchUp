@@ -3,8 +3,8 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { VRButton } from 'three/addons/webxr/VRButton.js';
 
-// Ruta del modelo exportado desde SketchUp
-const RUTA_MODELO = 'assets/modelo.glb';
+// Ruta del modelo
+const RUTA_MODELO = 'assets/Salon.glb';
 
 // Elementos HTML
 const contenedor = document.getElementById('contenedor3D');
@@ -42,7 +42,9 @@ renderizador.setSize(contenedor.clientWidth, contenedor.clientHeight);
 renderizador.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderizador.outputColorSpace = THREE.SRGBColorSpace;
 renderizador.shadowMap.enabled = true;
-renderizador.shadowMap.type = THREE.PCFSoftShadowMap;
+
+// Usando PCFShadowMap para evitar warnings
+renderizador.shadowMap.type = THREE.PCFShadowMap;
 
 // Activar WebXR / VR
 renderizador.xr.enabled = true;
@@ -63,11 +65,13 @@ controles.target.set(0, 1, 0);
 const luzAmbiente = new THREE.HemisphereLight(0xffffff, 0x334155, 2.2);
 escena.add(luzAmbiente);
 
-const luzDireccional = new THREE.DirectionalLight(0xffffff, 3.5);
+// LUZ DIRECCIONAL AJUSTADA (Menos intensa y con corrección de Acné de Sombra)
+const luzDireccional = new THREE.DirectionalLight(0xffffff, 2.0); 
 luzDireccional.position.set(8, 10, 8);
 luzDireccional.castShadow = true;
 luzDireccional.shadow.mapSize.width = 2048;
 luzDireccional.shadow.mapSize.height = 2048;
+luzDireccional.shadow.bias = -0.0005; // Corrección para las manchas en las paredes
 escena.add(luzDireccional);
 
 const luzExtra = new THREE.PointLight(0x38bdf8, 1.8, 100);
@@ -92,7 +96,7 @@ const guia = new THREE.GridHelper(24, 48, 0x38bdf8, 0x1e293b);
 guia.position.y = 0.01;
 escena.add(guia);
 
-// Función para preparar materiales y sombras
+// FUNCIÓN DE PREPARACIÓN DE MATERIALES MEJORADA
 function prepararModelo(objeto) {
   objeto.traverse((hijo) => {
     if (hijo.isMesh) {
@@ -101,6 +105,15 @@ function prepararModelo(objeto) {
 
       if (hijo.material) {
         hijo.material.side = THREE.DoubleSide;
+        
+        // Forzar a que los materiales de SketchUp no sean metálicos y sean mates
+        hijo.material.roughness = 0.9; 
+        hijo.material.metalness = 0.0;
+        
+        // Si el material exportó completamente negro por error, lo hacemos blanco/grisáceo
+        if (hijo.material.color && hijo.material.color.getHex() === 0x000000) {
+            hijo.material.color.setHex(0xe2e8f0);
+        }
       }
     }
   });
@@ -174,14 +187,8 @@ loader.load(
     console.error('Error al cargar el modelo:', error);
 
     mensajeCarga.innerHTML = `
-      <h3>Error al cargar el modelo</h3>
-      <p>
-        Revisa que exista el archivo:
-        <strong>assets/modelo.glb</strong>
-      </p>
-      <p>
-        También asegúrate de abrir el proyecto desde un servidor local.
-      </p>
+      <h5 class="fw-bold mb-1 text-danger">Error al cargar el modelo</h5>
+      <p class="small text-secondary mb-0">Revisa que exista el archivo: <code>assets/Salon.glb</code></p>
     `;
   }
 );

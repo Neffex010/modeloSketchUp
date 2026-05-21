@@ -8,79 +8,80 @@ html {
 
 body {
   margin: 0;
-  background-color: #020617;
+  background-color: #020617; /* Fondo Slate oscuro moderno */
   color: #f8fafc;
   font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
 }
 
-/* Navbar */
-.navbar {
-  min-height: 70px;
-}
-
-/* Header */
+/* Reducción del Header para dar prioridad al Visor 3D */
 .header-section {
-  min-height: 45vh;
-  padding-top: 120px;
-  padding-bottom: 60px;
-  background:
-    linear-gradient(rgba(2, 6, 23, 0.7), rgba(2, 6, 23, 0.95)),
-    radial-gradient(circle at top left, #2563eb, transparent 35%),
-    radial-gradient(circle at bottom right, #7c3aed, transparent 35%),
+  padding-top: 90px;
+  padding-bottom: 25px;
+  background: 
+    linear-gradient(rgba(2, 6, 23, 0.85), rgba(2, 6, 23, 1)),
+    radial-gradient(circle at top right, #1e3a8a, transparent 40%),
     #020617;
-  display: flex;
-  align-items: center;
 }
 
-/* Sección principal */
+/* Ajuste de distribución de la sección principal */
 .main-section {
-  min-height: 80vh;
+  background-color: #020617;
 }
 
-/* Panel lateral */
+/* Panel Lateral de Información */
 .panel-info {
-  background-color: #0f172a;
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
-  min-height: 80vh;
+  background-color: #0b0f19;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.panel-info code {
-  color: #38bdf8;
+.custom-card {
+  border-radius: 8px;
+  background-color: #111827 !important;
+  transition: transform 0.2s ease;
 }
 
-/* Contenedor del visor */
+.custom-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Contenedor del Visor 3D */
 .visor-container {
   position: relative;
-  min-height: 80vh;
-  background:
-    radial-gradient(circle at center, rgba(37, 99, 235, 0.18), transparent 35%),
-    #020617;
-  overflow: hidden;
+  background: #090d16;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Forzar la sincronización perfecta de la altura en Escritorio */
+@media (min-width: 992px) {
+  .panel-info, #contenedor3D, .visor-container {
+    height: 78vh; /* Altura de distribución unificada */
+  }
 }
 
 #contenedor3D {
   width: 100%;
-  height: 80vh;
 }
 
 canvas {
   display: block;
-  width: 100%;
-  height: 100%;
+  width: 100% !important;
+  height: 100% !important;
 }
 
-/* Mensaje de carga */
+/* Letrero/Mensaje de carga elegante flotando sobre el Canvas */
 .mensaje-carga {
   position: absolute;
-  top: 25px;
-  left: 25px;
+  top: 20px;
+  left: 20px;
   z-index: 10;
-  max-width: 360px;
-  padding: 20px;
-  border-radius: 18px;
-  background-color: rgba(15, 23, 42, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(10px);
+  width: 320px;
+  padding: 18px;
+  border-radius: 12px;
+  background-color: rgba(11, 15, 25, 0.85);
+  border: 1px solid rgba(56, 189, 248, 0.3); /* Borde sutil color cian */
+  backdrop-filter: blur(12px);
   color: #f8fafc;
 }
 
@@ -88,47 +89,51 @@ canvas {
   display: none;
 }
 
-/* Footer */
+/* Footer Ajustado */
 .footer {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: #090d16 !important;
+  padding-bottom: 80px !important; /* Padding inferior para que no estorbe el botón VR */
 }
 
-.footer a {
-  color: #93c5fd;
-  text-decoration: none;
+.x-small {
+  font-size: 0.75rem;
 }
 
-.footer a:hover {
-  color: #ffffff;
-  text-decoration: underline;
-}
-
-/* Botón VR de Three.js */
+/* Botón VR nativo de Three.js (Forzar posición limpia) */
 #VRButton {
   position: fixed !important;
-  bottom: 25px !important;
-  right: 25px !important;
-  z-index: 50 !important;
+  bottom: 20px !important;
+  right: 20px !important;
+  z-index: 100 !important;
+  background: rgba(14, 116, 144, 0.9) !important;
+  border: 1px solid #22d3ee !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  transition: all 0.3s ease !important;
 }
 
-/* Responsive */
+#VRButton:hover {
+  background: #0891b2 !important;
+  transform: scale(1.05);
+}
+
+/* Responsivo para móviles y tablets */
 @media (max-width: 991px) {
   .panel-info {
-    min-height: auto;
+    height: auto;
     border-right: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
   }
 
-  #contenedor3D {
-    height: 70vh;
-  }
-
-  .visor-container {
-    min-height: 70vh;
+  #contenedor3D, .visor-container {
+    height: 60vh;
   }
 
   .mensaje-carga {
-    position: static;
-    margin: 20px;
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    width: calc(100% - 30px);
   }
 }
