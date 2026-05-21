@@ -4,7 +4,7 @@ import { PointerLockControls } from 'three/addons/controls/PointerLockControls.j
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { VRButton } from 'three/addons/webxr/VRButton.js';
 
-const RUTA_MODELO = './assets/Salon.glb';
+const RUTA_MODELO = './assets/SALON.glb';
 
 // Elementos HTML
 const contenedor = document.getElementById('contenedor3D');
