@@ -65,7 +65,7 @@ controles.target.set(0, 1, 0);
 const luzAmbiente = new THREE.HemisphereLight(0xffffff, 0x334155, 2.2);
 escena.add(luzAmbiente);
 
-// LUZ DIRECCIONAL AJUSTADA (Menos intensa y con corrección de Acné de Sombra)
+// Luz direccional ajustada
 const luzDireccional = new THREE.DirectionalLight(0xffffff, 2.0); 
 luzDireccional.position.set(8, 10, 8);
 luzDireccional.castShadow = true;
@@ -88,15 +88,16 @@ const materialPiso = new THREE.MeshStandardMaterial({
 
 const piso = new THREE.Mesh(geometriaPiso, materialPiso);
 piso.rotation.x = -Math.PI / 2;
+piso.position.y = -0.05; // Ajuste para evitar Z-Fighting con el modelo
 piso.receiveShadow = true;
 escena.add(piso);
 
 // Guía
 const guia = new THREE.GridHelper(24, 48, 0x38bdf8, 0x1e293b);
-guia.position.y = 0.01;
+guia.position.y = -0.04; // Ajuste para evitar Z-Fighting con el modelo
 escena.add(guia);
 
-// FUNCIÓN DE PREPARACIÓN DE MATERIALES MEJORADA
+// Función de preparación de materiales
 function prepararModelo(objeto) {
   objeto.traverse((hijo) => {
     if (hijo.isMesh) {
@@ -137,24 +138,26 @@ function centrarModelo(objeto) {
   // Colocar sobre el piso
   objeto.position.y -= caja.min.y;
 
-  // Ajustar cámara según tamaño
-  const distancia = tamanioModelo * 1.8;
+  // Ajustar cámara según tamaño (Multiplicador reducido para acercar la cámara)
+  const distancia = tamanioModelo * 0.8; 
 
-  camara.position.set(distancia, distancia * 0.75, distancia);
+  // Ajustamos la altura (Y) a 0.5 para no picar tanto la cámara
+  camara.position.set(distancia, distancia * 0.5, distancia);
   camara.near = Math.max(tamanioModelo / 1000, 0.01);
   camara.far = tamanioModelo * 100;
   camara.updateProjectionMatrix();
 
-  controles.target.set(0, tamanio.y * 0.4, 0);
+  // Apuntamos la cámara ligeramente hacia abajo para enfocar los pupitres
+  controles.target.set(0, tamanio.y * 0.2, 0); 
   controles.update();
 }
 
 // Función para recentrar cámara
 function recentrarCamara() {
-  const distancia = tamanioModelo * 1.8;
+  const distancia = tamanioModelo * 0.8;
 
-  camara.position.set(distancia, distancia * 0.75, distancia);
-  controles.target.set(0, tamanioModelo * 0.25, 0);
+  camara.position.set(distancia, distancia * 0.5, distancia);
+  controles.target.set(0, tamanioModelo * 0.2, 0);
   controles.update();
 }
 
