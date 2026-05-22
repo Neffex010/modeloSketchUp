@@ -4,8 +4,8 @@ import { PointerLockControls } from 'three/addons/controls/PointerLockControls.j
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { VRButton } from 'three/addons/webxr/VRButton.js';
 
-// Ruta del modelo (Usamos ./ para asegurar la compatibilidad estricta con servidores Linux de GitHub Pages)
-const RUTA_MODELO = './assets/Salon.glb';
+// RUTA CORREGIDA: Uso estricto de mayúsculas para compatibilidad con GitHub Pages
+const RUTA_MODELO = './assets/SALON.glb';
 
 // Elementos HTML
 const contenedor = document.getElementById('contenedor3D');
@@ -26,7 +26,7 @@ const escena = new THREE.Scene();
 escena.background = new THREE.Color(0x020617);
 const reloj = new THREE.Clock();
 
-// --- SISTEMA DE CÁMARA Y DOLLY (Contenedor esencial para traslación en VR) ---
+// --- SISTEMA DE CÁMARA Y DOLLY ---
 const dolly = new THREE.Group();
 escena.add(dolly);
 
@@ -37,13 +37,12 @@ dolly.add(camara);
 const renderizador = new THREE.WebGLRenderer({ antialias: true, alpha: true });
 renderizador.setSize(contenedor.clientWidth, contenedor.clientHeight);
 
-// OPTIMIZACIÓN 1: Limitamos el pixelRatio máximo a 1.5 en lugar de 2. 
-// Esto reduce drásticamente la carga de píxeles en pantallas móviles de alta densidad sin perder calidad visible.
+// OPTIMIZACIÓN: Límite de PixelRatio para pantallas de alta densidad (mejora radical de FPS)
 renderizador.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 
 renderizador.outputColorSpace = THREE.SRGBColorSpace;
 renderizador.shadowMap.enabled = true;
-renderizador.shadowMap.type = THREE.PCFShadowMap; // Resuelve la advertencia amarilla en consola
+renderizador.shadowMap.type = THREE.PCFShadowMap; 
 renderizador.xr.enabled = true;
 
 contenedor.appendChild(renderizador.domElement);
@@ -57,28 +56,27 @@ const luzDireccional = new THREE.DirectionalLight(0xffffff, 2.0);
 luzDireccional.position.set(8, 10, 8);
 luzDireccional.castShadow = true;
 
-// OPTIMIZACIÓN 2: Reducimos la resolución del mapa de sombras de 2048 a 1024.
-// Menos memoria consumida por la GPU, acelerando el renderizado en tiempo real.
+// OPTIMIZACIÓN: Sombras a 1024 en lugar de 2048 para aligerar la carga de la GPU
 luzDireccional.shadow.mapSize.width = 1024;
 luzDireccional.shadow.mapSize.height = 1024;
-luzDireccional.shadow.bias = -0.0005; // Elimina el acné de sombra (ruido/manchas de las paredes)
+luzDireccional.shadow.bias = -0.0005; // Elimina el acné de sombra (manchas)
 escena.add(luzDireccional);
 
 const luzExtra = new THREE.PointLight(0x38bdf8, 1.8, 100);
 luzExtra.position.set(-5, 5, -5);
 escena.add(luzExtra);
 
-// --- ESCENARIO VIRTUAL (PISO Y GUÍA CON PREVENCIÓN DE Z-FIGHTING) ---
+// --- ESCENARIO VIRTUAL ---
 const geometriesPiso = new THREE.CircleGeometry(15, 64);
 const materialPiso = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.85, metalness: 0.05 });
 const piso = new THREE.Mesh(geometriesPiso, materialPiso);
 piso.rotation.x = -Math.PI / 2;
-piso.position.y = -0.05; // Bajado sutilmente para que no intercepte el suelo plano del salón de SketchUp
+piso.position.y = -0.05; // Ajuste milimétrico anti Z-Fighting
 piso.receiveShadow = true;
 escena.add(piso);
 
 const guia = new THREE.GridHelper(24, 48, 0x38bdf8, 0x1e293b);
-guia.position.y = -0.04; // Posicionado entre el piso del mundo y el suelo del modelo
+guia.position.y = -0.04; 
 escena.add(guia);
 
 
@@ -86,12 +84,12 @@ escena.add(guia);
 // CONFIGURACIÓN DE CONTROLES HÍBRIDOS
 // ==========================================
 
-// 1. Controles de Órbita (Modo Maqueta)
+// 1. Controles Orbit (Maqueta)
 const controlesOrbit = new OrbitControls(camara, renderizador.domElement);
 controlesOrbit.enableDamping = true;
 controlesOrbit.dampingFactor = 0.05;
 
-// 2. Controles de Bloqueo de Puntero (Modo Primera Persona PC)
+// 2. Controles FPS (PC / Teclado)
 const controlesPC = new PointerLockControls(camara, document.body);
 const teclas = { adelante: false, atras: false, izquierda: false, derecha: false };
 const velocidadActual = new THREE.Vector3();
@@ -114,7 +112,7 @@ document.addEventListener('keyup', (e) => {
   }
 });
 
-// 3. Entrada táctil/gatillo básica para Cardboard en VR
+// 3. Controles Básicos VR Móvil (Gatillo/Táctil)
 let avanzarVR = false;
 const controladorVR = renderizador.xr.getController(0);
 controladorVR.addEventListener('selectstart', () => { avanzarVR = true; });
@@ -123,7 +121,7 @@ escena.add(controladorVR);
 
 
 // ==========================================
-// CONTROLADORES DE INTERFAZ Y MODOS
+// INTERFAZ DE USUARIO Y MODOS
 // ==========================================
 
 function activarModoMaqueta() {
@@ -140,7 +138,7 @@ function activarModoMaqueta() {
   }
 
   dolly.position.set(0, 0, 0); 
-  const distancia = tamanioModelo * 0.8; // Proporción matemática de encuadre cercana
+  const distancia = tamanioModelo * 0.8; 
   camara.position.set(distancia, distancia * 0.5, distancia);
   controlesOrbit.target.set(0, tamanioModelo * 0.2, 0);
   controlesOrbit.update();
@@ -160,7 +158,7 @@ function activarModoFPS() {
   }
 
   dolly.position.set(0, 0, 0);
-  camara.position.set(0, 1.5, 0); // Altura estándar de la vista
+  camara.position.set(0, 1.5, 0); 
   camara.lookAt(0, 1.5, -1);
   controlesPC.lock();
 }
@@ -180,7 +178,7 @@ renderizador.xr.addEventListener('sessionstart', () => {
 
 
 // ==========================================
-// GESTIÓN DE RECURSOS 3D (LOADER)
+// PREPARACIÓN DE MATERIALES (GLTF/GLB)
 // ==========================================
 
 function prepararModelo(objeto) {
@@ -190,14 +188,13 @@ function prepararModelo(objeto) {
       hijo.receiveShadow = true;
 
       if (hijo.material) {
-        // OPTIMIZACIÓN 3: Cambiado de DoubleSide a FrontSide.
-        // Al procesar sólo la cara frontal de los polígonos correctos de SketchUp, la GPU renderiza la mitad de geometría por cuadro.
+        // OPTIMIZACIÓN: FrontSide en lugar de DoubleSide reduce el coste de geometría a la mitad
         hijo.material.side = THREE.FrontSide; 
         
-        // Configuración uniforme mate para mitigar brillos plásticos por defecto
         hijo.material.roughness = 0.9; 
         hijo.material.metalness = 0.0;
         
+        // Corrección de bug de exportación donde materiales salen negros
         if (hijo.material.color && hijo.material.color.getHex() === 0x000000) {
             hijo.material.color.setHex(0xe2e8f0);
         }
@@ -215,7 +212,6 @@ function iniciarModelo(objeto) {
   caja.getSize(tamanio);
   tamanioModelo = Math.max(tamanio.x, tamanio.y, tamanio.z, 1);
 
-  // Alineación precisa del centro geométrico en los ejes del escenario
   objeto.position.x -= centro.x;
   objeto.position.z -= centro.z;
   objeto.position.y -= caja.min.y;
@@ -236,7 +232,8 @@ loader.load(
   function (error) {
     console.error("Detalles del error de carga:", error);
     if (mensajeCarga) {
-      mensajeCarga.innerHTML = `<h5 class="fw-bold mb-1 text-danger">Error al cargar</h5><p class="small">Verifica assets/Salon.glb</p>`;
+      // Corrección de texto en el mensaje de error también
+      mensajeCarga.innerHTML = `<h5 class="fw-bold mb-1 text-danger">Error al cargar</h5><p class="small">Verifica assets/SALON.glb</p>`;
     }
   }
 );
@@ -257,18 +254,16 @@ window.addEventListener('resize', () => {
 
 
 // ==========================================
-// BUCLE PRINCIPAL DE RENDERIZADO (LOOP DE ANIMACIÓN)
+// LOOP DE ANIMACIÓN Y FÍSICAS
 // ==========================================
 
 renderizador.setAnimationLoop(() => {
-  const delta = Math.min(reloj.getDelta(), 0.1); // Evita saltos bruscos si cae el framerate
+  const delta = Math.min(reloj.getDelta(), 0.1); 
 
-  // PROCESAMIENTO MODO MAQUETA
   if (modoActual === 'maqueta') {
     controlesOrbit.update();
   }
 
-  // PROCESAMIENTO MODO PC DESKTOP (Mecánicas FPS)
   if (modoActual === 'fps' && controlesPC.isLocked) {
     velocidadActual.x -= velocidadActual.x * 10.0 * delta;
     velocidadActual.z -= velocidadActual.z * 10.0 * delta;
@@ -282,13 +277,12 @@ renderizador.setAnimationLoop(() => {
 
     controlesPC.moveRight(-velocidadActual.x * delta);
     controlesPC.moveForward(-velocidadActual.z * delta);
-    camara.position.y = 1.5; // Mantiene la línea del horizonte fija al suelo
+    camara.position.y = 1.5; 
   }
 
-  // PROCESAMIENTO MODO INMERSIVO VR (Entorno Mobile / Sensor Bluetooth)
   if (renderizador.xr.isPresenting || modoActual === 'vr') {
     
-    // Entrada por pulsación táctil (Avanzar rectilíneo hacia la mirada)
+    // VR: Táctil / Gatillo
     if (avanzarVR) {
       camara.getWorldDirection(vectorDireccion);
       vectorDireccion.y = 0; 
@@ -296,7 +290,7 @@ renderizador.setAnimationLoop(() => {
       dolly.position.addScaledVector(vectorDireccion, 2.5 * delta); 
     }
 
-    // Entrada por Hardware Externo (Gamepad API para Control Bluetooth)
+    // VR: Soporte para Mando Bluetooth (Gamepad API)
     const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
     let gp = null;
     
@@ -308,28 +302,25 @@ renderizador.setAnimationLoop(() => {
     }
 
     if (gp) {
-      const deadzone = 0.15; // Margen para evitar drifting involuntario
+      const deadzone = 0.15; 
       const velCaminar = 3.5;
       const velGirar = 2.0;
 
-      const ejeAdelante = Math.abs(gp.axes[1]) > deadzone ? gp.axes[1] : 0; // Stick Izq (V)
-      const ejeLado = Math.abs(gp.axes[0]) > deadzone ? gp.axes[0] : 0;     // Stick Izq (H)
-      const ejeRotacion = Math.abs(gp.axes[2]) > deadzone ? gp.axes[2] : 0; // Stick Der (H)
+      const ejeAdelante = Math.abs(gp.axes[1]) > deadzone ? gp.axes[1] : 0; 
+      const ejeLado = Math.abs(gp.axes[0]) > deadzone ? gp.axes[0] : 0;     
+      const ejeRotacion = Math.abs(gp.axes[2]) > deadzone ? gp.axes[2] : 0; 
 
       if (ejeAdelante !== 0 || ejeLado !== 0) {
         camara.getWorldDirection(vectorDireccion);
         vectorDireccion.y = 0;
         vectorDireccion.normalize();
 
-        // Traslación frontal/dorsal del dolly
         dolly.position.addScaledVector(vectorDireccion, -ejeAdelante * velCaminar * delta);
 
-        // Traslación lateral conjugada (Strafe)
         const vectorDerecha = new THREE.Vector3().crossVectors(vectorDireccion, new THREE.Vector3(0, 1, 0)).normalize();
         dolly.position.addScaledVector(vectorDerecha, ejeLado * velCaminar * delta);
       }
 
-      // Rotación angular sobre el eje Y
       if (ejeRotacion !== 0) {
         dolly.rotation.y -= ejeRotacion * velGirar * delta;
       }
